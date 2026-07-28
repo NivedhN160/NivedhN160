@@ -2,17 +2,15 @@ import base64
 from PIL import Image
 import io
 
-def get_base64_image(image_path, size=(180, 180)):
+def get_base64_image(image_path, size=(160, 160)):
     try:
         with Image.open(image_path) as img:
-            # Crop to square
             min_dim = min(img.size)
             left = (img.width - min_dim) / 2
             top = (img.height - min_dim) / 2
             img = img.crop((left, top, left + min_dim, top + min_dim))
-            img = img.resize(size, Image.Resampling.LANCZOS)
+            img = img.resize(size, Image.Resampling.NEAREST)
             
-            # Convert to base64
             buffered = io.BytesIO()
             img.save(buffered, format="PNG")
             img_str = base64.b64encode(buffered.getvalue()).decode()
@@ -26,91 +24,49 @@ def generate_svg():
     
     svg = f"""<svg xmlns="http://www.w3.org/2000/svg" width="850" height="420">
     <defs>
-        <!-- Font styling -->
         <style>
-            @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&amp;family=Inter:wght@400;600;800&amp;display=swap');
-            .terminal-bg {{ fill: #0D1117; stroke: #30363D; stroke-width: 1px; }}
-            .header-bg {{ fill: #161B22; }}
-            .text-title {{ font-family: 'Inter', sans-serif; font-size: 24px; font-weight: 800; fill: #C9D1D9; }}
-            .text-subtitle {{ font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; fill: #8B949E; }}
-            .text-code {{ font-family: 'Fira Code', monospace; font-size: 14px; fill: #58A6FF; }}
-            .text-prompt {{ font-family: 'Fira Code', monospace; font-size: 14px; fill: #3FB950; font-weight: 600; }}
-            .text-body {{ font-family: 'Inter', sans-serif; font-size: 14px; fill: #C9D1D9; line-height: 1.5; }}
-            .text-highlight {{ fill: #FF7B72; font-weight: 600; }}
-            
-            .badge-bg {{ fill: #238636; rx: 10px; }}
-            .badge-text {{ font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; fill: #FFFFFF; }}
-            .badge-bg-2 {{ fill: #1F6FEB; rx: 10px; }}
-            
-            /* Glitch effect for image */
-            .profile-pic {{ clip-path: circle(50% at 50% 50%); filter: grayscale(20%) contrast(120%); }}
+            @import url('https://fonts.googleapis.com/css2?family=VT323&amp;display=swap');
+            .bg {{ fill: #000000; }}
+            text {{ font-family: 'VT323', 'Courier New', monospace; font-size: 20px; fill: #00FF41; }}
+            .dim {{ fill: #008F11; }}
+            .profile-pic {{ filter: grayscale(100%) contrast(150%) brightness(70%); }}
         </style>
         
-        <clipPath id="circleView">
-            <circle cx="120" cy="200" r="80" />
-        </clipPath>
-        
-        <!-- Subtle Grid Pattern -->
-        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#21262D" stroke-width="0.5" />
+        <!-- CRT scanline overlay -->
+        <pattern id="scanlines" width="4" height="4" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="0" x2="4" y2="0" stroke="#000000" stroke-width="2" stroke-opacity="0.5"/>
         </pattern>
     </defs>
 
-    <!-- Background Window -->
-    <rect width="100%" height="100%" rx="12" class="terminal-bg" />
-    <rect width="100%" height="100%" rx="12" fill="url(#grid)" />
+    <rect width="100%" height="100%" class="bg" />
     
-    <!-- Terminal Header -->
-    <path d="M 0 12 Q 0 0 12 0 L 838 0 Q 850 0 850 12 L 850 40 L 0 40 Z" class="header-bg" />
-    <line x1="0" y1="40" x2="850" y2="40" stroke="#30363D" stroke-width="1" />
+    <image href="{img_b64}" x="30" y="30" width="160" height="160" class="profile-pic" />
+    <!-- Apply scanlines over the image -->
+    <rect x="30" y="30" width="160" height="160" fill="url(#scanlines)" />
     
-    <!-- Mac OS Buttons -->
-    <circle cx="25" cy="20" r="6" fill="#FF5F56" />
-    <circle cx="45" cy="20" r="6" fill="#FFBD2E" />
-    <circle cx="65" cy="20" r="6" fill="#27C93F" />
+    <text x="30" y="220" class="dim">CONNECTION: OK</text>
+    <text x="30" y="245">root@neural-grid</text>
+    <text x="30" y="270" class="dim">UPTIME: 99.9%</text>
     
-    <!-- Header Text -->
-    <text x="425" y="25" text-anchor="middle" class="text-subtitle" fill="#8B949E">nivedh@neural-grid: ~</text>
-
-    <!-- Profile Image -->
-    <image href="{img_b64}" x="40" y="120" width="160" height="160" class="profile-pic" />
-    <text x="120" y="310" text-anchor="middle" class="text-subtitle" fill="#3FB950">● SYSTEMS ONLINE</text>
-    
-    <!-- Terminal Content Area -->
-    <g transform="translate(240, 80)">
+    <g transform="translate(230, 45)">
+        <text y="0">root@neural-grid:~# whoami</text>
+        <text y="25" class="dim">Nivedh Sunil</text>
+        <text y="50" class="dim">Backend AI Engineer &amp; OS Dev</text>
         
-        <!-- Command 1 -->
-        <text y="20"><tspan class="text-prompt">❯</tspan> <tspan class="text-code">whoami</tspan></text>
-        <text y="50" class="text-title">Nivedh Sunil</text>
-        <text y="75" class="text-subtitle">Backend AI Engineer &amp; OS Developer <tspan fill="#30363D">|</tspan> Bengaluru, India</text>
+        <text y="95">root@neural-grid:~# cat philosophy.txt</text>
+        <text y="120" class="dim">I build things most people assume already exist.</text>
+        <text y="145" class="dim">Operating systems from bare metal.</text>
+        <text y="170" class="dim">Transformers without ML libraries.</text>
+        <text y="195" class="dim">Builds OSs for fun. Ships AI for work.</text>
         
-        <!-- Command 2 -->
-        <text y="120"><tspan class="text-prompt">❯</tspan> <tspan class="text-code">cat philosophy.txt</tspan></text>
-        <text y="145" class="text-body">I build things most people assume already exist.</text>
-        <text y="165" class="text-body">Operating systems from bare metal. Transformers without ML</text>
-        <text y="185" class="text-body">libraries. <tspan class="text-highlight">Builds OSs for fun. Ships AI for work.</tspan></text>
+        <text y="240">root@neural-grid:~# ls -la ./projects</text>
+        <text y="265" class="dim">drwxr-xr-x 2 root root 4096 N-OS</text>
+        <text y="290" class="dim">drwxr-xr-x 2 root root 4096 ZigNGPT</text>
+        <text y="315" class="dim">drwxr-xr-x 2 root root 4096 LabMate</text>
+        <text y="340" class="dim">drwxr-xr-x 2 root root 4096 TERRA-X</text>
         
-        <!-- Command 3 -->
-        <text y="235"><tspan class="text-prompt">❯</tspan> <tspan class="text-code">ls ./current_projects</tspan></text>
-        
-        <!-- Project Badges -->
-        <g transform="translate(0, 255)">
-            <rect width="60" height="24" class="badge-bg" />
-            <text x="30" y="16" text-anchor="middle" class="badge-text">N-OS</text>
-            
-            <rect x="70" y="0" width="80" height="24" class="badge-bg" />
-            <text x="110" y="16" text-anchor="middle" class="badge-text">ZigNGPT</text>
-            
-            <rect x="160" y="0" width="85" height="24" class="badge-bg-2" />
-            <text x="202" y="16" text-anchor="middle" class="badge-text">LabMate AI</text>
-            
-            <rect x="255" y="0" width="80" height="24" class="badge-bg-2" />
-            <text x="295" y="16" text-anchor="middle" class="badge-text">TERRA-X</text>
-        </g>
-
-        <!-- Command 4 -->
-        <text y="315"><tspan class="text-prompt">❯</tspan> <tspan class="text-code">echo $STACK</tspan></text>
-        <text y="340" class="text-body" fill="#8B949E">Python • Zig • C • React Three Fiber • FastAPI • Llama/Groq</text>
+        <text y="385">root@neural-grid:~# echo $STACK</text>
+        <text y="410" class="dim">[Python] [Zig] [C] [React] [FastAPI] [Llama]</text>
     </g>
 </svg>"""
 
