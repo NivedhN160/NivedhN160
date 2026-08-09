@@ -9,7 +9,9 @@
 </div>
 
 ## Projects (Auto)
-<!-- AUTO-PROJECTS:START -->\n\n<!-- AUTO-PROJECTS:END -->
+<!-- AUTO-PROJECTS:START -->
+
+<!-- AUTO-PROJECTS:END -->
 
 ## Stack
 Python · Zig · C · FastAPI · React Three Fiber

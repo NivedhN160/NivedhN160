@@ -65,9 +65,9 @@ def main():
         if next((f for f in flagships if f.lower() == name.lower()), None):
             badge = " 🎯 **Flagship** |"
             
-        markdown_lines.append(f"- [**{name}**]({url}) {badge} {lang}{star_str}\\n  <br/> {desc}\\n")
+        markdown_lines.append(f"- [**{name}**]({url}) {badge} {lang}{star_str}\n  <br/> {desc}\n")
         
-    new_content = "\\n".join(markdown_lines)
+    new_content = "\n".join(markdown_lines)
     
     with open('README.md', 'r', encoding='utf-8') as f:
         readme = f.read()
@@ -79,7 +79,7 @@ def main():
         start_idx = readme.find(start_marker) + len(start_marker)
         end_idx = readme.find(end_marker)
         
-        updated_readme = readme[:start_idx] + "\\n" + new_content + "\\n" + readme[end_idx:]
+        updated_readme = readme[:start_idx] + "\n" + new_content + "\n" + readme[end_idx:]
         with open('README.md', 'w', encoding='utf-8') as f:
             f.write(updated_readme)
         print("Updated README.md")
