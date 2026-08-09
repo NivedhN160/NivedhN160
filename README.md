@@ -7,3 +7,14 @@
     <img alt="System Profile" src="dark.svg">
   </picture>
 </div>
+
+## Projects (Auto)
+<!-- AUTO-PROJECTS:START -->\n\n<!-- AUTO-PROJECTS:END -->
+
+## Stack
+Python · Zig · C · FastAPI · React Three Fiber
+
+## Links
+- [LinkedIn](https://www.linkedin.com/in/nivedh-sunil/)
+- [Hugging Face](https://huggingface.co/NivedhN160)
+- [Portfolio](https://nivedhn160.github.io)
