@@ -65,7 +65,7 @@ def main():
         if next((f for f in flagships if f.lower() == name.lower()), None):
             badge = " 🎯 **Flagship** |"
             
-        markdown_lines.append(f"- [**{name}**]({url}) {badge} {lang}{star_str}\n  <br/> {desc}\n")
+        markdown_lines.append(f"- [**{name}**]({url}) {badge} {lang}{star_str}\n  {desc}\n")
         
     new_content = "\n".join(markdown_lines)
     
